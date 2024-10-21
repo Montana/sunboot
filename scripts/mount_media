@@ -11,24 +11,16 @@
 #
 # where target is one of the files in the 'target' subdirectory of sunboot.
 
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
-   exit 1
-fi
+[[ $EUID -ne 0 ]] && { echo "This script must be run as root"; exit 1; }
 
-. /vagrant/scripts/functions.sh
+source /vagrant/scripts/functions.sh
+target_file="/vagrant/targets/$1"
 
-if [ ! -f /vagrant/targets/$1 ]; then
-    error_exit "Target \"$1\" not found."
-fi
+[[ ! -f "$target_file" ]] && error_exit "Target \"$1\" not found."
 
-. /vagrant/targets/$1
+source "$target_file"
 
 case $INSTALLMEDIA in
-    CDROM)
-        cdrom_mount
-        ;;
-    TAPE)
-        error_exit "Not yet supported"
-        ;;
+    CDROM) cdrom_mount ;;
+    TAPE) error_exit "Not yet supported" ;;
 esac
